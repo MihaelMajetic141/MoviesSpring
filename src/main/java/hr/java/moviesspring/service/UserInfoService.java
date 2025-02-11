@@ -14,4 +14,5 @@ public interface UserInfoService {
     Optional<Movie> removeMovieFromLikedList(String username, Long movieId);
     List<Movie> getWatchLaterMovies(String username);
     List<Movie> getLikedMovies(String username);
+    boolean authenticateJwtHeader(String username, String token);
 }

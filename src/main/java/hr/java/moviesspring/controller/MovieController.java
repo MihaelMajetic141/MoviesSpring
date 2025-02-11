@@ -1,6 +1,9 @@
 package hr.java.moviesspring.controller;
 
 import hr.java.moviesspring.model.Movie;
+import hr.java.moviesspring.model.UserInfo;
+import hr.java.moviesspring.repository.UserRepository;
+import hr.java.moviesspring.security.jwt.JwtService;
 import hr.java.moviesspring.service.MovieService;
 import hr.java.moviesspring.service.UserInfoService;
 import lombok.extern.slf4j.Slf4j;
@@ -89,9 +92,13 @@ public class MovieController {
 
    @GetMapping("/user/getWatchLaterMovies/{username}")
    public ResponseEntity<?> getWatchLaterMovies(
-           @PathVariable String username
+           @PathVariable String username,
+           @RequestHeader("Authorization") String token
    ) {
         try {
+            if (!userInfoService.authenticateJwtHeader(username, token)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Optional.empty());
+            }
             List<Movie> movieList = userInfoService.getWatchLaterMovies(username);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(movieList);
         } catch (RuntimeException e) {
@@ -101,9 +108,13 @@ public class MovieController {
 
     @GetMapping("/user/getLikedMovies/{username}")
     public ResponseEntity<?> getLikedMovies(
-            @PathVariable String username
+            @PathVariable String username,
+            @RequestHeader("Authorization") String token
     ) {
         try {
+            if (!userInfoService.authenticateJwtHeader(username, token)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Optional.empty());
+            }
             List<Movie> movieList = userInfoService.getLikedMovies(username);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(movieList);
         } catch (RuntimeException e) {
@@ -114,9 +125,13 @@ public class MovieController {
    @PostMapping("/user/addMovieToLikedList")
    public ResponseEntity<?> addMovieToLikedList(
            @RequestParam String username,
-           @RequestParam Long movieId
+           @RequestParam Long movieId,
+           @RequestHeader("Authorization") String token
    ) {
         try {
+            if (!userInfoService.authenticateJwtHeader(username, token)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Optional.empty());
+            }
             Optional<Movie> movie = userInfoService.addMovieToLikedList(username, movieId);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(movie);
         } catch (RuntimeException e) {
@@ -127,9 +142,13 @@ public class MovieController {
     @PostMapping("/user/addMovieToWatchLaterList")
     public ResponseEntity<?> addMovieToWatchLaterList(
             @RequestParam String username,
-            @RequestParam Long movieId
+            @RequestParam Long movieId,
+            @RequestHeader("Authorization") String token
     ) {
         try {
+            if (!userInfoService.authenticateJwtHeader(username, token)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Optional.empty());
+            }
             Optional<Movie> movie = userInfoService.addMovieToWatchLater(username, movieId);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(movie);
         } catch (RuntimeException e) {
@@ -140,9 +159,13 @@ public class MovieController {
     @DeleteMapping("/user/removeMovieFromLikedList")
     public ResponseEntity<?> removeMovieFromLikedList(
             @RequestParam String username,
-            @RequestParam Long movieId
+            @RequestParam Long movieId,
+            @RequestHeader("Authorization") String token
     ) {
         try {
+            if (!userInfoService.authenticateJwtHeader(username, token)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Optional.empty());
+            }
             Optional<Movie> movie = userInfoService.removeMovieFromLikedList(username, movieId);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(movie);
         } catch (Exception e) {
@@ -153,9 +176,13 @@ public class MovieController {
     @DeleteMapping("/user/removeMovieFromWatchLaterList")
     public ResponseEntity<?> removeMovieFromWatchLaterList(
             @RequestParam String username,
-            @RequestParam Long movieId
+            @RequestParam Long movieId,
+            @RequestHeader("Authorization") String token
     ) {
         try {
+            if (!userInfoService.authenticateJwtHeader(username, token)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Optional.empty());
+            }
             Optional<Movie> movie = userInfoService.removeMovieFromWatchLater(username, movieId);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(movie);
         } catch (Exception e) {

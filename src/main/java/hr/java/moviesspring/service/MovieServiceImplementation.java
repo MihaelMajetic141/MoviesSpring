@@ -36,4 +36,6 @@ public class MovieServiceImplementation implements MovieService {
         return movieRepository.getMoviesByGenresContainingIgnoreCase(genre, pageable);
     }
 
+
+
 }

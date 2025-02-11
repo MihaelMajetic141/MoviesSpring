@@ -4,6 +4,7 @@ import hr.java.moviesspring.model.Movie;
 import hr.java.moviesspring.model.UserInfo;
 import hr.java.moviesspring.repository.MovieRepository;
 import hr.java.moviesspring.repository.UserRepository;
+import hr.java.moviesspring.security.jwt.JwtService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.Set;
 public class UserInfoServiceImplementation implements UserInfoService {
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
+    private final JwtService jwtService;
 
     @Override
     public Optional<Movie> addMovieToWatchLater(String username, Long movieId) {
@@ -86,5 +88,12 @@ public class UserInfoServiceImplementation implements UserInfoService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Set<Movie> likedMovies = user.getLikedMovies();
         return likedMovies.stream().toList();
+    }
+
+    public boolean authenticateJwtHeader(String username, String token) {
+        String jwt = token.substring(7);
+        String email = jwtService.extractEmail(jwt);
+        Optional<UserInfo> user = userRepository.findByEmail(email);
+        return user.isPresent() && user.get().getUsername().equals(username);
     }
 }
